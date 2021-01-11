@@ -30,6 +30,7 @@ type ConfigInfo map[string]string
 func main()  {
 	port := flag.Int("port", 0, "On which port the connection should be established.")
 	host := flag.String("host", " ", "Host Name or IP Address with which a connection should be established.")
+	parallel := flag.Bool("parallel", false, "Whether the connection should be established serially or parallel.")
 	cakey := flag.String("cakey", " ", "Certificate Authority (CA) private key.")
 	cacert := flag.String("cacert", " ", "Certificate Authority (CA) crt file.")
 	concurrency := flag.Int("concurrency", 0, "How many times should the connection be established.")
@@ -105,7 +106,11 @@ func main()  {
 	Addr := fmt.Sprintf("%s%s%d", *host, ":", *port)
 
 	for i := 0; i < *concurrency; i++ {
-		go ProcessOutgoingConnection(Addr, tlsConfigs[i], sleep, message)
+		if *parallel {
+			go ProcessOutgoingConnection(Addr, tlsConfigs[i], sleep, message)
+		} else {
+			ProcessOutgoingConnection(Addr, tlsConfigs[i], sleep, message)
+		}
 	}
 
 	fmt.Scanln()
