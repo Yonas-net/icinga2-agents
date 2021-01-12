@@ -11,7 +11,7 @@ import (
 	"encoding/pem"
 	"flag"
 	"fmt"
-	"github.com/Yonas-net/windows-crash/lib/base"
+	"github.com/Yonas-net/icinga2-agents/lib/base"
 	"io/ioutil"
 	"log"
 	"math/big"
