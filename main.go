@@ -12,6 +12,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/Yonas-net/icinga2-agents/lib/base"
+	"github.com/nu7hatch/gouuid"
 	"io/ioutil"
 	"log"
 	"math/big"
@@ -81,7 +82,12 @@ func main()  {
 	tlsConfigs := make(map[int]*tls.Config)
 
 	for i := 0; i < *concurrency; i++ {
-		_ , certPem := GenerateCertificate(CAuthority, parsedKey, privateKey, duration, fmt.Sprintf("localhost%d", i))
+		uUniqueId, err := uuid.NewV4()
+		if err != nil {
+			log.Fatalf("CLIENT: Failed to generate Universal Unique Identifier: %s", err.Error())
+		}
+
+		_ , certPem := GenerateCertificate(CAuthority, parsedKey, privateKey, duration, uUniqueId.String())
 
 		caCertPool := x509.NewCertPool()
 		caCertPool.AppendCertsFromPEM(rootCAs)
