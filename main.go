@@ -17,6 +17,7 @@ import (
 	"log"
 	"math/big"
 	_ "os"
+	"strings"
 	"time"
 )
 
@@ -147,15 +148,16 @@ func ProcessOutgoingConnection(Addr string, conf *tls.Config, sleep *time.Durati
 		log.Fatalf("CLIENT: Failed to connect: %s", err.Error())
 	}
 
-	log.Printf("CLIENT: Connect to %s succeed", Addr)
+	value := strings.Split(Addr, ":")
+	log.Printf("CLIENT: Reconnecting to endpoint '%s' succeed via port '%s'", value[0], value[1])
 	time.Sleep(*sleep)
 
-	log.Printf("CLIENT: JsonRpcConnection: Sending pki::RequestCertificate JSRPC message: %s", message)
+	log.Printf("CLIENT: JsonRpcConnection: Requesting new certificate for this Icinga instance: %s", message)
 
 	err = base.WriteNetStringToStream(conn, message)
 
 	if err != nil {
-		log.Printf("CLIENT: JsonRpcConnection: Error while sending json encoded JSRPC message: %s", err)
+		log.Printf("CLIENT: JsonRpcConnection: Error while sending certificate sigining request message: %s", err)
 	}
 }
 
